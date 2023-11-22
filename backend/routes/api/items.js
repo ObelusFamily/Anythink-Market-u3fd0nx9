@@ -330,6 +330,7 @@ router.delete("/:item/comments/:comment", auth.required, function(
             res.sendStatus(204);
           });
       }
+      res.sendStatus(204);
     })
   })
 });
