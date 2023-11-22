@@ -317,6 +317,7 @@ router.delete("/:item/comments/:comment", auth.required, function(
 ) {
   Comment.find({ _id: req.comment._id }).then((comment) => {
     User.findById(req.payload.id).then((user) => {
+      console.log(`seller: ${comment.seller}\nuser: ${user}`)
       if (comment.seller == user) {
         req.item.comments.remove(req.comment._id);
         req.item
