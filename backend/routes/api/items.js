@@ -315,17 +315,36 @@ router.delete("/:item/comments/:comment", auth.required, function(
   res,
   next
 ) {
-  req.item.comments.remove(req.comment._id);
-  req.item
-    .save()
-    .then(
-      Comment.find({ _id: req.comment._id })
-        .remove()
-        .exec()
-    )
-    .then(function() {
-      res.sendStatus(204);
-    });
+  Comment.find({ _id: req.comment._id }).then((comment) => {
+    User.findById(req.payload.id).then((user) => {
+      if (!user) {
+        console.log(`######\nuser not found`)
+        return res.sendStatus(401);
+      }
+      for (const [key, value] of Object.entries(comment)) {
+        console.log(`${key}: ${value}`);
+      }
+      console.log(`######\nuser: ${user._id}\nseller: ${comment[0].seller.toString()}\ntypeof: ${typeof comment[0].seller.toString()}\ntypeof2: ${typeof user.toString()}`)
+      console.log(`######\nequals: ${comment[0].seller == user._id}`)
+
+      if (comment[0].seller.toString() == user._id.toString()) {
+        console.log(`######\ninside delete`)
+        req.item.comments.remove(req.comment._id);
+        req.item
+          .save()
+          .then(
+            Comment.find({ _id: req.comment._id })
+              .remove()
+              .exec()
+          )
+          .then(function() {
+            res.sendStatus(204);
+          });
+      } else {
+        res.sendStatus(403)
+      }
+    })
+  })
 });
 
 module.exports = router;
