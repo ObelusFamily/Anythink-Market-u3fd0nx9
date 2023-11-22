@@ -320,7 +320,7 @@ router.delete("/:item/comments/:comment", auth.required, function(
       if (!user) {
         return res.sendStatus(401);
       }
-      if (comment.toJSONFor(user).seller == user) {
+      if (comment.seller == user) {
         req.item.comments.remove(req.comment._id);
         req.item
           .save()
